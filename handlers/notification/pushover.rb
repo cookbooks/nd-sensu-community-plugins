@@ -9,7 +9,7 @@
 # Released under the same terms as Sensu (the MIT license); see LICENSE
 # for details.
 
-require 'rubygems' if RUBY_VERSION < '1.9.0'
+require 'rubygems'
 require 'net/https'
 require 'sensu-handler'
 require 'timeout'
