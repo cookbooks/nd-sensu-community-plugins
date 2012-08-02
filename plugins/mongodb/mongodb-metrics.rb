@@ -31,11 +31,11 @@ class InterfaceGraphite < Sensu::Plugin::Metric::CLI::Graphite
       },
 
       :indexcounters => {
-        :accesses => server_stats["indexCounters"]["accesses"],
-        :hits => server_stats["indexCounters"]["hits"],
-        :misses => server_stats["indexCounters"]["misses"],
-        :resets => server_stats["indexCounters"]["resets"],
-        :missRatio => server_stats["indexCounters"]["missRatio"],
+        :accesses => server_stats["indexCounters"]["btree"]["accesses"],
+        :hits => server_stats["indexCounters"]["btree"]["hits"],
+        :misses => server_stats["indexCounters"]["btree"]["misses"],
+        :resets => server_stats["indexCounters"]["btree"]["resets"],
+        :missRatio => server_stats["indexCounters"]["btree"]["missRatio"],
       },
 
       :flushing => {
