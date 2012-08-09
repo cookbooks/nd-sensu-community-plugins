@@ -32,9 +32,15 @@ class CheckMySQL < Sensu::Plugin::Check::CLI
          :long => '--hostname HOST',
          :default => 'localhost'
 
+  option :database,
+         :description => "Database to use",
+         :short => '-d',
+         :long => '--database DATABASE',
+         :default => 'test'
+
   def run
     begin
-      db = Mysql.real_connect(config[:hostname], config[:user], config[:password], "test")
+      db = Mysql.real_connect(config[:hostname], config[:user], config[:password], config[:database])
       info = db.get_server_info
       ok "Server version: #{info}"
     rescue Mysql::Error => e
