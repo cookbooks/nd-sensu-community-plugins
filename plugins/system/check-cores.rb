@@ -18,17 +18,27 @@ class CheckCores < Sensu::Plugin::Check::CLI
   option :root_path,
     :short => '-p PATH'
 
+  option :seen_cores_file,
+    :short => '-s PATH',
+    :default => '/etc/sensu/seen_cores.txt'
+
   def initialize
     super
     @core_files = []
+    @seen_core_files = []
   end
 
   def find_cores
+    File.open(config[:seen_cores_file], 'r') do |f|
+      while line = f.gets
+        seen_core_files << line
+      end
+    end
     Find.find(config[:root_path]) do |path|
       if FileTest.directory?(path)
         next
       else
-        if File.basename(path).match(/^core/)
+        if File.basename(path).match(/^core/) && !seen_core_files.include?(File.expand_path(path))
           core_files << File.expand_path(path)
         end
       end
@@ -45,4 +55,5 @@ class CheckCores < Sensu::Plugin::Check::CLI
     ok "No core files detected."
   end
 
+  File.open(config[:seen_cores_file], 'a') {|f| f.write(@core_files.join('\n')) }
 end
