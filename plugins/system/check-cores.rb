@@ -29,17 +29,21 @@ class CheckCores < Sensu::Plugin::Check::CLI
   end
 
   def find_cores
-    File.open(config[:seen_cores_file], 'r') do |f|
-      while line = f.gets
-        seen_core_files << line
+    begin
+      File.open(config[:seen_cores_file], 'r') do |f|
+        while line = f.gets
+          @seen_core_files << line
+        end
       end
+    rescue
+      nil
     end
     Find.find(config[:root_path]) do |path|
       if FileTest.directory?(path)
         next
       else
-        if File.basename(path).match(/^core/) && !seen_core_files.include?(File.expand_path(path))
-          core_files << File.expand_path(path)
+        if File.basename(path).match(/^core/) && !@seen_core_files.include?(File.expand_path(path))
+          @core_files << File.expand_path(path)
         end
       end
     end
@@ -51,9 +55,8 @@ class CheckCores < Sensu::Plugin::Check::CLI
 
   def run
     find_cores
-    warning core_files if !@core_files.empty?
+    warning files_list if !@core_files.empty?
     ok "No core files detected."
+    File.open(config[:seen_cores_file], 'a') {|f| f.write(@core_files.join('\n')) }
   end
-
-  File.open(config[:seen_cores_file], 'a') {|f| f.write(@core_files.join('\n')) }
 end
