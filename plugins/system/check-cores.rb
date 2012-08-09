@@ -55,8 +55,8 @@ class CheckCores < Sensu::Plugin::Check::CLI
 
   def run
     find_cores
+    File.open(config[:seen_cores_file], 'a') {|f| f.write(@core_files.join('\n')) } if !@core_files.empty?
     warning files_list if !@core_files.empty?
     ok "No core files detected."
-    File.open(config[:seen_cores_file], 'a') {|f| f.write(@core_files.join('\n')) }
   end
 end
