@@ -60,6 +60,8 @@ class CheckMysqlDisk < Sensu::Plugin::Check::CLI
     db_user = config[:user]
     db_pass = config[:pass]
     disk_size = config[:size].to_f
+    crit = config[:crit]
+    warn = config[:warn]
 
     if [db_host, db_user, db_pass, disk_size].any? {|v| v.nil? }
       unknown "Must specify host, user, password and size"
@@ -89,9 +91,9 @@ class CheckMysqlDisk < Sensu::Plugin::Check::CLI
       disk_use_percentage = total_size / disk_size * 100
       diskstr = "DB size: #{total_size}, disk use: #{disk_use_percentage}%"
 
-      if disk_use_percentage > CRIT_THRESHOLD
+      if disk_use_percentage > crit
         critical "Database size exceeds critical threshold: #{diskstr}"
-      elsif disk_use_percentage > WARN_THRESHOLD
+      elsif disk_use_percentage > warn
         warning "Database size exceeds warning threshold: #{diskstr}"
       else
         ok diskstr
