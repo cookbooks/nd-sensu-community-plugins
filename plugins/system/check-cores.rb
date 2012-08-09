@@ -50,7 +50,7 @@ class CheckCores < Sensu::Plugin::Check::CLI
   end
 
   def files_list
-    "Found core files: " + @core_files.join(', ')
+    "New core files detected: " + @core_files.join(', ')
   end
 
   def run
