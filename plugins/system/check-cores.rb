@@ -11,52 +11,48 @@
 
 require 'rubygems'
 require 'sensu-plugin/check/cli'
-require 'find'
+require 'set'
 
 class CheckCores < Sensu::Plugin::Check::CLI
 
   option :root_path,
-    :short => '-p PATH'
+    :short => '-p PATH',
+    :default => '/etc/sv/core'
 
   option :seen_cores_file,
     :short => '-s PATH',
-    :default => '/etc/sensu/seen_cores.txt'
+    :default => '/etc/sensu/seen_cores.dat'
 
   def initialize
     super
-    @core_files = []
-    @seen_core_files = []
+    @config = config
   end
 
-  def find_cores
-    begin
-      File.open(config[:seen_cores_file], 'r') do |f|
-        while line = f.gets
-          @seen_core_files << line
-        end
+  def recorded_cores
+    if File.exists?(@config[:seen_cores_file])
+      File.open(@config[:seen_cores_file]) do |file|
+        Marshal.load(file)
       end
-    rescue
-      nil
+    else
+      Set.new
     end
-    Find.find(config[:root_path]) do |path|
-      if FileTest.directory?(path)
-        next
-      else
-        if File.basename(path).match(/^core/) && !@seen_core_files.include?(File.expand_path(path))
-          @core_files << File.expand_path(path)
-        end
-      end
-    end
+  end
+
+  def existing_cores
+    cores = Dir.new(@config[:root_path]).select {|f| f.match(/core.[0-9]+/)}
+    cores.to_set
   end
 
   def files_list
-    "New core files detected: " + @core_files.join(', ')
+    "New core files detected: " + @new_cores.join(', ')
   end
 
   def run
-    find_cores
-    File.open(config[:seen_cores_file], 'a') {|f| f.write(@core_files.join('\n')) } if !@core_files.empty?
-    warning files_list if !@core_files.empty?
-    ok "No core files detected."
+    @new_cores = existing_cores.subtract(recorded_cores).to_a
+    @file = File.open(config[:seen_cores_file], 'w')
+    @file.write(Marshal.dump(existing_cores))
+    @file.close
+    warning files_list if !@new_cores.empty?
+    ok "No new core files detected."
   end
 end
