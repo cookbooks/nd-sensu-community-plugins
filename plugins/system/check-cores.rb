@@ -23,6 +23,10 @@ class CheckCores < Sensu::Plugin::Check::CLI
     :short => '-s PATH',
     :default => '/etc/sensu/seen_cores.dat'
 
+  option :core_regex,
+    :short => '-r REGEX',
+    :default => 'core.[0-9]+'
+
   def initialize
     super
     @config = config
@@ -39,7 +43,7 @@ class CheckCores < Sensu::Plugin::Check::CLI
   end
 
   def existing_cores
-    cores = Dir.new(@config[:root_path]).select {|f| f.match(/core.[0-9]+/)}
+    cores = Dir.new(@config[:root_path]).select {|f| f.match(/#{@config[:core_regex]}/)}
     cores.to_set
   end
 
