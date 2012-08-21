@@ -8,7 +8,11 @@ require 'hipchat'
 class HipChatNotif < Sensu::Handler
 
   def event_name
-    @event['client']['name'] + '/' + @event['check']['name']
+    if @event['client']['environment']
+      @event['client']['name'] + '/' + @event['client']['environment'] + '/' + @event['check']['name']
+    else
+      @event['client']['name'] + '/' + @event['check']['name']
+    end
   end
 
   def handle

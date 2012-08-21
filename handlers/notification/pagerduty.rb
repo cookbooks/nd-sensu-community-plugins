@@ -19,7 +19,11 @@ class Pagerduty < Sensu::Handler
   end
 
   def handle
-    description = @event['notification'] || [@event['client']['name'], @event['check']['name'], @event['check']['output']].join(' : ')
+    if @event['client']['environment']
+      description = @event['notification'] || [@event['client']['name'], @event['client']['environment'], @event['check']['name'], @event['check']['output']].join(' : ')
+    else
+      description = @event['notification'] || [@event['client']['name'], @event['check']['name'], @event['check']['output']].join(' : ')
+    end
     begin
       timeout(3) do
         response = case @event['action']
