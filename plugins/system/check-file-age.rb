@@ -25,14 +25,19 @@ class CheckFileAge < Sensu::Plugin::Check::CLI
         :short => '-t [ctime|mtime|atime]',
         :default => 'mtime'
 
+    def initialize
+        super
+        @config = config
+    end
+
     def run
         case config[:check_type]
         when "ctime"
-            s = File.ctime(config[:log_file_path])
+            s = File.ctime(config[:log_file_path]).to_i
         when "mtime"
-            s = File.mtime(config[:log_file_path])
+            s = File.mtime(config[:log_file_path]).to_i
         when "atime"
-            s = File.atime(config[:log_file_path])
+            s = File.atime(config[:log_file_path]).to_i
         else
             warning "#{config[:check_type]} is not one of [ctime|mtime|atime]"
         end
