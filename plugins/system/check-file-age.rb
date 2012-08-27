@@ -25,27 +25,22 @@ class CheckFileAge < Sensu::Plugin::Check::CLI
         :short => '-t [ctime|mtime|atime]',
         :default => 'mtime'
 
-    def initialize
-        super
-        @config = config
-    end
-
     def run
         case config[:check_type]
         when "ctime"
-            s = File.ctime(config[:log_file_path]).to_i
+            s = File.ctime(config[:file_path]).to_i
         when "mtime"
-            s = File.mtime(config[:log_file_path]).to_i
+            s = File.mtime(config[:file_path]).to_i
         when "atime"
-            s = File.atime(config[:log_file_path]).to_i
+            s = File.atime(config[:file_path]).to_i
         else
             warning "#{config[:check_type]} is not one of [ctime|mtime|atime]"
         end
         now_sec = Time.now.to_i
-        if now_sec - s > config[:log_age]
-            warning "Celeryd logfile is #{s} seconds old!"
+        if now_sec - s > config[:age]
+            warning "#{config[:file_path]} is #{now_sec - s} seconds old!"
         end
-        ok "Celeryd logfile is not old enough for you to worry about."
+        ok "#{config[:file_path]} is not old enough for you to worry about."
     end
 
 end
