@@ -57,6 +57,6 @@ class CheckCores < Sensu::Plugin::Check::CLI
     @file.write(Marshal.dump(existing_cores))
     @file.close
     warning files_list if !@new_cores.empty?
-    ok "No new core files detected."
+    ok "No core files detected."
   end
 end
