@@ -19,7 +19,8 @@ class CheckFileAge < Sensu::Plugin::Check::CLI
 
     option :age,
         :short => '-a AGE_IN_SECONDS',
-        :default => 300
+        :default => 300,
+        :proc => proc {|a| a.to_i }
 
     option :check_type,
         :short => '-t [ctime|mtime|atime]',
