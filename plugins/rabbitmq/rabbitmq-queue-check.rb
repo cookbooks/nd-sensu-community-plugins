@@ -69,9 +69,9 @@ class RabbitMQMessagesMonitor < Sensu::Plugin::Check::CLI
         end
       end
       if queue['messages'] >= config[:messages_threshold]
-        warning "#{filter} queue has #{queue['messages']} messages, more than the allowed #{config[:messages_threshold]}"
+        warning "#{config[:filter]} queue has #{queue['messages']} messages, more than the allowed #{config[:messages_threshold]}"
       else
-        ok "#{filter} queue has #{queue['messages']} messages in it"
+        ok "#{config[:filter]} queue has #{queue['messages']} messages in it"
       end
     end
     ok
