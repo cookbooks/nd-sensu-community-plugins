@@ -15,12 +15,12 @@ require 'redphone/pagerduty'
 class Pagerduty < Sensu::Handler
 
   def incident_key
-    @event['client']['name'] + '/' + @event['check']['name']
+    @event['client']['name'] + '/' + @event['client']['environment'] + '/' + @event['check']['name']
   end
 
   def handle
     if @event['client']['environment']
-      description = @event['notification'] || [@event['client']['name'], @event['client']['environment'], @event['check']['name'], @event['check']['output']].join(' : ')
+      description = @event['notification'] || [@event['client']['name'], @event['client']['environment'], @event['check']['name'], @event['check']['output'], @event['client']['subscriptions']].join(' : ')
     else
       description = @event['notification'] || [@event['client']['name'], @event['check']['name'], @event['check']['output']].join(' : ')
     end
