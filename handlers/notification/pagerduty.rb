@@ -20,7 +20,7 @@ class Pagerduty < Sensu::Handler
 
   def handle
     if @event['client'].has_key?('partners')
-      partners_str = "<br/>PARTNERS: #{@event['client']['partners'].join(', ')}"
+      partners_str = "PARTNERS: #{@event['client']['partners'].join(', ')}"
     else
       partners_str = ""
     end
