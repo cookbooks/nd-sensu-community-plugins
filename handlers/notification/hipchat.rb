@@ -17,10 +17,13 @@ class HipChatNotif < Sensu::Handler
 
   def handle
     hipchatmsg = HipChat::Client.new(settings["hipchat"]["apikey"])
+    partners_str = ""
+    if @event['client'].has_key?('partners')
+      partners_str = "<br/>PARTNERS: #{@event['client']['partners'].join(', ')}"
     if @event['action'].eql?("resolve")
-      hipchatmsg[settings["hipchat"]["room"]].send('Sensu', "RESOLVED - [#{event_name}] - #{@event['check']['notification']} <br/> OUTPUT: #{@event['check']['output']} <br/> SUBS: #{@event['client']['subscriptions']}", :color => 'green')
+      hipchatmsg[settings["hipchat"]["room"]].send('Sensu', "RESOLVED - [#{event_name}] - #{@event['check']['notification']} <br/> OUTPUT: #{@event['check']['output']} <br/> SUBS: #{@event['client']['subscriptions']} #{partners_str}", :color => 'green')
     else
-      hipchatmsg[settings["hipchat"]["room"]].send('Sensu', "ALERT - [#{event_name}] - #{@event['check']['notification']} <br/> OUTPUT: #{@event['check']['output']} <br/> SUBS: #{@event['client']['subscriptions']}", :color => 'red', :notify => true)
+      hipchatmsg[settings["hipchat"]["room"]].send('Sensu', "ALERT - [#{event_name}] - #{@event['check']['notification']} <br/> OUTPUT: #{@event['check']['output']} <br/> SUBS: #{@event['client']['subscriptions']} #{partners_str}", :color => 'red', :notify => true)
     end
   end
 
