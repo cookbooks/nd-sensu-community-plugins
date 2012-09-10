@@ -19,10 +19,14 @@ class Pagerduty < Sensu::Handler
   end
 
   def handle
+    partner_str = ""
+    if @event['client'].has_key?('partners')
+      partners_str = "<br/>PARTNERS: #{@event['client']['partners'].join(', ')}"
+
     if @event['client']['environment']
-      description = @event['notification'] || [@event['client']['name'], @event['client']['environment'], @event['check']['name'], @event['check']['output'], @event['client']['subscriptions']].join(' : ')
+      description = @event['notification'] || [@event['client']['name'], @event['client']['environment'], @event['check']['name'], partners_str, @event['check']['output'], @event['client']['subscriptions']].join(' : ')
     else
-      description = @event['notification'] || [@event['client']['name'], @event['check']['name'], @event['check']['output']].join(' : ')
+      description = @event['notification'] || [@event['client']['name'], @event['check']['name'], partners_str, @event['check']['output']].join(' : ')
     end
     begin
       timeout(3) do
