@@ -56,16 +56,8 @@ class CheckSilenced < Sensu::Plugin::Check::CLI
   end
 
   def delete_stash(stashname)
-    begin
-      r = RestClient::Resource.new("http://localhost:4567/stash/#{stashname}", :timeout => 45)
-      JSON.parse(r.delete)
-    rescue Errno::ECONNREFUSED
-      warning 'Connection refused'
-    rescue RestClient::RequestTimeout
-      warning 'Connection timed out'
-    rescue JSON::ParserError
-      warning 'Sensu API returned invalid JSON'
-    end
+    r = RestClient::Resource.new("http://localhost:4567/stash/#{stashname}", :timeout => 45)
+    r.delete
   end
 
   def get_old_stashes
