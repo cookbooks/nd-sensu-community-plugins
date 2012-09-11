@@ -80,9 +80,9 @@ class CheckSilenced < Sensu::Plugin::Check::CLI
         stashes.each do |stashname|
           delete_stash(stashname)
         end
-        warning "#{stashes.length} stashes are older than #{@time} seconds. Cleaning up stashes: #{stashes.join(', ')}"
+        warning "#{stashes.length} stashes are older than #{config[:time]} seconds. Cleaning up stashes: #{stashes.join(', ')}"
       else
-        critical "#{stashes.length} stashes are older than #{@time} seconds. Not cleaning up stashes: #{stashes.join(', ')}"
+        critical "#{stashes.length} stashes are older than #{config[:time]} seconds. Not cleaning up stashes: #{stashes.join(', ')}"
       end
     end
     ok
