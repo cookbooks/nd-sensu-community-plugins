@@ -20,7 +20,7 @@ class CheckSilenced < Sensu::Plugin::Check::CLI
     :long => '--time N',
     :description => 'Number of seconds',
     :proc => proc {|a| a.to_i },
-    :default => 0
+    :default => 600
 
   option :unsilence,
     :short => '-u',
@@ -74,7 +74,7 @@ class CheckSilenced < Sensu::Plugin::Check::CLI
     stash_data = []
     stashes.each do |stashname|
       stash = get_stash(stashname)
-      if now - stash['timestamp'] > @time
+      if now - stash['timestamp'] > config[:time]
         stash_data.push(stashname)
       end
     end
@@ -84,7 +84,7 @@ class CheckSilenced < Sensu::Plugin::Check::CLI
   def run
     stashes = get_old_stashes
     if stashes.length > 0
-      if @unsilence
+      if config[:unsilence]
         stashes.each do |stashname|
           delete_stash(stashname)
         end
