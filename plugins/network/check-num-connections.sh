@@ -63,7 +63,7 @@ if (( "$conn_total" < "$conn_warn" )); then
 fi
 
 if (( "$conn_total" >= "$conn_warn" )); then
-	OUTPUT="Warning - Connetions on port $port = $conn_total"
+	OUTPUT="Warning - Connections on port $port = $conn_total"
 	exitstatus=$STATE_WARNING
 fi
 
