@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+5#!/usr/bin/env ruby
 
 require 'rubygems' if RUBY_VERSION < '1.9.0'
 require 'sensu-plugin/metric/cli'
@@ -55,7 +55,12 @@ class InterfaceGraphite < Sensu::Plugin::Metric::CLI::Graphite
         :warning => server_stats["asserts"]["warning"],
         :msg => server_stats["asserts"]["msg"],
         :user => server_stats["asserts"]["user"],
-        :rollover => server_stats["asserts"]["rollover"],
+        :rollover => server_stats["asserts"]["rollover"]
+      },
+      
+      :connections => {
+        :current => server_stats["connections"]["current"],
+        :available => server_stats["connections"]["available"]
       }
     }
 
