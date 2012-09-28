@@ -11,8 +11,9 @@ STATE_OK=0
 STATE_WARNING=1
 STATE_CRITICAL=2
 STATE_UNKNOWN=3
-
-port=$1
+PORT=$1
+HOSTNAME=$(hostname -s)
+DATE=$(date +%s)
 
 #Check arguments
 if [ $# -lt 1 ]; then
@@ -31,6 +32,11 @@ while test -n "$1"; do
 		-h)
 			echo "Use: $0 <port> [-w | --warning <warn>] [-c | --critical <crit>]"
 			exit $STATE_OK
+			;;
+		--metrics)
+			METRICS=$(netstat -a | grep "$PORT" | wc -l)
+			echo "stats.$HOSTNAME.connections_to_$PORT" "$METRICS" "$DATE"
+			exit
 			;;
 		--warning)
 			conn_warn=$2
@@ -55,26 +61,24 @@ done
 
 
 # Execute command to find number of connections
-conn_total=$(netstat -a | grep "$port" | wc -l)
+conn_total=$(netstat -a | grep "$PORT" | wc -l)
 
 if (( "$conn_total" < "$conn_warn" )); then
-	OUTPUT="OK - Connections on port $port = $conn_total"
+	OUTPUT="OK - Connections on port $PORT = $conn_total"
 	exitstatus=$STATE_OK
 fi
 
 if (( "$conn_total" >= "$conn_warn" )); then
-	OUTPUT="Warning - Connections on port $port = $conn_total"
+	OUTPUT="Warning - Connections on port $PORT = $conn_total"
 	exitstatus=$STATE_WARNING
 fi
 
 if (( "$conn_total" >= "$conn_crit" )); then
-	OUTPUT="Critical - Connections on port $port = $conn_total"
+	OUTPUT="Critical - Connections on port $PORT = $conn_total"
 	exitstatus=$STATE_CRITICAL
 fi
 
 echo $OUTPUT
 exit $exitstatus
-
-
 
 
