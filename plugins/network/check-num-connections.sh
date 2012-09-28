@@ -12,15 +12,12 @@ STATE_WARNING=1
 STATE_CRITICAL=2
 STATE_UNKNOWN=3
 PORT=$1
-HOSTNAME=$(hostname -s)
-DATE=$(date +%s)
 
 #Check arguments
 if [ $# -lt 1 ]; then
 	echo "Usage: $0 <port> [-w|--warning <warn>] [-c|--critical <crit>]"
 	exit $STATE_UNKNOWN
 fi
-
 
 # Get arguments
 while test -n "$1"; do
@@ -32,11 +29,6 @@ while test -n "$1"; do
 		-h)
 			echo "Use: $0 <port> [-w | --warning <warn>] [-c | --critical <crit>]"
 			exit $STATE_OK
-			;;
-		--metrics)
-			METRICS=$(netstat -a | grep "$PORT" | wc -l)
-			echo "stats.$HOSTNAME.connections_to_$PORT" "$METRICS" "$DATE"
-			exit
 			;;
 		--warning)
 			conn_warn=$2
@@ -57,7 +49,6 @@ while test -n "$1"; do
 	esac
    shift
 done
-
 
 
 # Execute command to find number of connections
